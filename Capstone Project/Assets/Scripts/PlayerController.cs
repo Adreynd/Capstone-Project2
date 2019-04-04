@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     private float nextFire;                 //counter for fire rate
     private GameObject settingshot;
     
-    private bool teather;                   // Teather key input
+    private bool tether;                   // Tether key input
     private bool crouch;                    // Crouch key input
     private bool up;                        // Look up key input
     private bool jump;                      // Jump key input
@@ -36,10 +36,14 @@ public class PlayerController : MonoBehaviour
     private Animator animate;
     private Rigidbody2D body;
 
+    //Run when p;ayer is created
     void Start()
     {
+        //Player starts facing right
         facing = true;
+        //Player has not double jumped
         doubleJump = false;
+        //assign rigidbody to variable
         body = GetComponent<Rigidbody2D>();
         SetInitialState();
     }
@@ -98,7 +102,10 @@ public class PlayerController : MonoBehaviour
         if (hMove > 0) { facing = true; }
         else if (hMove < 0) { facing = false; }
 
+        //Assign grounded
         grounded = controller.m_Grounded;
+        //Reset double jump if player is grounded
+        if (grounded) { canDouble = true; }
 
         //Fire if enough time has passed between shots and fire button is pressed
         if (fire && timer > fireRate)
@@ -107,14 +114,13 @@ public class PlayerController : MonoBehaviour
             timer = 0.0f;
         }
 
-        if (teather)
-            CastTether();
+        //If grapple key is pressed
+        if (tether) { CastTether(); }
 
-        if(grounded) { canDouble = true; }
-
+        //reset bools at the end of a FixedUpdate
         jump = false;
         doubleJump = false;
-        teather = false;
+        tether = false;
     }
 
     void CastTether()           // Currently non functional
