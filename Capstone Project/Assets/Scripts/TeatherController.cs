@@ -12,7 +12,7 @@ public class TeatherController : MonoBehaviour
     private float distance = 1;
     public float deployAngle;
     public float speed;
-    public float tetherRange;
+    public float teatherRange;
 
     // Start is called before the first frame update
     void Start()
@@ -40,7 +40,7 @@ public class TeatherController : MonoBehaviour
     {
         if (Input.GetButtonUp("Teather"))
             released = true;
-        if (distance > tetherRange)
+        if (distance > teatherRange)
             reached = true;
 
         distance = Mathf.Sqrt(Mathf.Pow(transform.position.x - player.transform.position.x, 2) + Mathf.Pow(transform.position.y - player.transform.position.y, 2));
@@ -68,7 +68,7 @@ public class TeatherController : MonoBehaviour
         }
         else if ((reached || released) && other.gameObject.tag == "Player")
         {
-            player.tetherOut = false;
+            player.teatherOut = false;
             Destroy(gameObject);
         }
     }
