@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     private Animator animate;
     private Rigidbody2D body;
 
-    //Run when player is created
+
     void Start()
     {
         //Player starts facing right
@@ -116,7 +116,6 @@ public class PlayerController : MonoBehaviour
 
         //If grapple key is pressed
         if (teather) { CastTeather(); }
-
         //reset bools at the end of a FixedUpdate
         jump = false;
         doubleJump = false;
