@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     private float nextFire;                 //counter for fire rate
     private GameObject settingshot;
     
-    private bool teather;                   // Teather key input
+    private bool teather;                  // Teather key input
     private bool crouch;                    // Crouch key input
     private bool up;                        // Look up key input
     private bool jump;                      // Jump key input
@@ -31,15 +31,19 @@ public class PlayerController : MonoBehaviour
     private bool grounded;                  // On the ground as opposed to in the air?
     private bool camFollow;                 // Camera is in follow mode?
     [System.NonSerialized] public float hMove = 0.0f;             // Ground movement
-    [System.NonSerialized] public bool tetherOut;                 // Grappling hook deployed?
+    [System.NonSerialized] public bool teatherOut;                 // Grappling hook deployed?
     private GameObject GrappleHook;         // Active Grappling Hook Object
     private Animator animate;
     private Rigidbody2D body;
 
+    //Run when player is created
     void Start()
     {
+        //Player starts facing right
         facing = true;
+        //Player has not double jumped
         doubleJump = false;
+        //assign rigidbody to variable
         body = GetComponent<Rigidbody2D>();
         SetInitialState();
     }
@@ -75,16 +79,16 @@ public class PlayerController : MonoBehaviour
         }
 
         //crouch button press/release
-        if (Input.GetButtonDown("Look Up")) { up = true; }
-        else if (Input.GetButtonUp("Look Up")) { up = false; }
+        if (Input.GetButtonDown("Upwards")) { up = true; }
+        else if (Input.GetButtonUp("Upwards")) { up = false; }
 
         //look/aim up
-        if (Input.GetAxisRaw("Vertical") < 0) { crouch = true; }
-        else if (Input.GetAxisRaw("Vertical") >= 0) { crouch = false; }
+        if (Input.GetButtonDown("Downwards")) { crouch = true; }
+        else if (Input.GetButtonDown("Downwards")) { crouch = false; }
 
         //Attack button press/release
-        if (Input.GetButtonDown("Attack") || Input.GetButtonDown("Fire1")) { fire = true; }
-        else if (Input.GetButtonUp("Attack") || Input.GetButtonUp("Fire1")) { fire = false; }
+        if (Input.GetButtonDown("Attack")) { fire = true; }
+        else if (Input.GetButtonUp("Attack")) { fire = false; }
 
         if (Input.GetButtonDown("Teather")) { teather = true; }
         #endregion
@@ -98,7 +102,10 @@ public class PlayerController : MonoBehaviour
         if (hMove > 0) { facing = true; }
         else if (hMove < 0) { facing = false; }
 
+        //Assign grounded
         grounded = controller.m_Grounded;
+        //Reset double jump if player is grounded
+        if (grounded) { canDouble = true; }
 
         //Fire if enough time has passed between shots and fire button is pressed
         if (fire && timer > fireRate)
@@ -107,21 +114,20 @@ public class PlayerController : MonoBehaviour
             timer = 0.0f;
         }
 
-        if (teather)
-            CastTether();
+        //If grapple key is pressed
+        if (teather) { CastTeather(); }
 
-        if(grounded) { canDouble = true; }
-
+        //reset bools at the end of a FixedUpdate
         jump = false;
         doubleJump = false;
         teather = false;
     }
 
-    void CastTether()           // Currently non functional
+    void CastTeather()           // Currently non functional
     {
-        if (!tetherOut)
+        if (!teatherOut)
         {
-            tetherOut = true;
+            teatherOut = true;
             GrappleHook = Instantiate(hook, new Vector3(transform.position.x + .2f, transform.position.y + .2f, transform.position.z), Quaternion.identity);
         }
     }
