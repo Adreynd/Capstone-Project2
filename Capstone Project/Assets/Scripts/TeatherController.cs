@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TeatherController : MonoBehaviour
 {
+    private DistanceJoint2D joint;
     private Rigidbody2D body;
     private PlayerController player;
     private bool reached;
@@ -19,6 +20,8 @@ public class TeatherController : MonoBehaviour
     {
         body = GetComponent<Rigidbody2D>();
         player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+        joint = player.GetComponent<DistanceJoint2D>();
+        joint.enabled = false;
 
         Vector3 targetVelocity;
 
@@ -38,7 +41,7 @@ public class TeatherController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonUp("Teather"))
+        if (Input.GetButtonDown("Teather"))
             released = true;
         if (distance > teatherRange)
             reached = true;
@@ -61,10 +64,18 @@ public class TeatherController : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log("Collision Detected.");
-        if (other.gameObject.tag == "Grapple Target")
+        if (other.gameObject.tag == "Terrain" && other.GetComponent<Collider>().gameObject.GetComponent<Rigidbody2D>() /*&& other.gameObject.Grappable*/)
         {
             body.velocity = Vector2.zero;
             contact = true;
+            joint.connectedAnchor = new Vector2(transform.position.x, transform.position.y); ;
+            joint.enabled = true;
+            joint.connectedBody = other.GetComponent<Collider>().gameObject.GetComponent<Rigidbody2D>();
+            joint.distance = teatherRange;
+        }
+        else if (other.gameObject.tag == "Terrain")
+        {
+            released = true;
         }
         else if ((reached || released) && other.gameObject.tag == "Player")
         {
@@ -75,6 +86,7 @@ public class TeatherController : MonoBehaviour
 
     void Retract()
     {
+        joint.enabled = false;
         float xT = (transform.position.x - player.transform.position.x) / Mathf.Abs(transform.position.x - player.transform.position.x);
         float yT = (transform.position.y - player.transform.position.y) / Mathf.Abs(transform.position.y - player.transform.position.y);
         float x = Mathf.Abs(transform.position.x - player.transform.position.x) / distance * xT;
